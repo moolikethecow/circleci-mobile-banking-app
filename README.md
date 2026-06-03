@@ -2,6 +2,8 @@
 
 [![CircleCI](https://circleci.com/gh/AwesomeCICD/circleci-mobile-banking-app/tree/main.svg?style=svg)](https://circleci.com/gh/AwesomeCICD/circleci-mobile-banking-app/tree/main)
 
+> **Personal fork for the Generative AI Summit NYC demo.** The canonical source is [AwesomeCICD/circleci-mobile-banking-app](https://github.com/AwesomeCICD/circleci-mobile-banking-app); pull updates with `git fetch upstream && git merge upstream/main`. This fork only personalizes `DEMO.md` and `README.md`; gates and hooks are unchanged.
+
 A CircleCI demo of a brownfield mobile banking app — React Native mini-apps bundling on Linux, handing off to a native iOS shell on macOS.
 
 Built to showcase **Chunk Sidecars**: moving CI validation into the inner loop so feedback lands in seconds, before any commit hits CI.
@@ -104,7 +106,7 @@ cd circleci-mobile-banking-app
 (cd miniapps/transfers && npm ci)
 
 # 3. Provision your own Chunk sidecar (one-time, ~30s)
-chunk sidecar create --org-id <YOUR_ORG_ID> --name circleci-mobile-banking-app
+chunk sidecar create --org-id efc130dc-284f-4533-964e-844f5c173860 --name moo-chunk-demo
 
 # 4. Install the scanners on the sidecar (one-time; snapshot afterwards if you want to skip this next time)
 chunk validate --remote --cmd "curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin"
