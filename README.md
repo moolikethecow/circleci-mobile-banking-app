@@ -8,7 +8,9 @@ A CircleCI demo of a brownfield mobile banking app — React Native mini-apps bu
 
 Built to showcase **Chunk Sidecars**: moving CI validation into the inner loop so feedback lands in seconds, before any commit hits CI.
 
-The 4-minute on-stage walkthrough lives in [`DEMO.md`](./DEMO.md).
+The on-stage walkthrough lives in [`DEMO.md`](./DEMO.md). The full backstage
+setup-and-run guide (install, auth, sidecar provisioning, troubleshooting) lives
+in [`docs/RUNBOOK.md`](./docs/RUNBOOK.md).
 
 ---
 
