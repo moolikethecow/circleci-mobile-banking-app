@@ -202,11 +202,18 @@ git status                 # confirm clean
 chunk sidecar current      # confirm sidecar is up
 chunk validate             # warm it (green)
 ./scripts/seed-broken.sh   # apply the broken-agent state
-claude                     # launch Claude Code FROM INSIDE the repo
 ```
 
-> Launch `claude` from inside the repo so the `.claude/settings.json` Stop hook
-> activates. If you launch it from elsewhere, the hook won't fire.
+Then open your agent **from inside the repo** so its stop hook activates:
+
+- **Cursor:** open this repo folder as the Cursor workspace. The `.cursor/hooks.json`
+  `stop` hook runs `.cursor/hooks/chunk-validate.sh` after every agent turn.
+- **Claude Code:** run `claude` from inside the repo. The `.claude/settings.json`
+  Stop hook runs `chunk validate` after every turn.
+
+> If you open the agent from outside the repo, the hook won't fire. Both hooks
+> run the identical `chunk validate` loop, so the on-stage beat is the same in
+> either agent.
 
 Then follow [`DEMO.md`](../DEMO.md) for the on-stage walkthrough. The beat:
 
@@ -232,8 +239,11 @@ git reset --hard origin/main   # only if you committed during a run
 - `.chunk/config.json` defines the 12 gates the sidecar runs.
 - `.circleci/config.yml` runs the **same commands, character-for-character** —
   install / lint / Trivy / Snyk / test / bundle, for both mini-apps.
-- `.claude/settings.json` has a `Stop` hook (`chunk validate`) that fires after
-  every Claude Code turn, plus a `PreToolUse` hook on `git commit`.
+- A stop hook fires `chunk validate` after every agent turn, wired for both
+  agents: `.claude/settings.json` (`Stop` hook, plus a `PreToolUse` hook on
+  `git commit`) for Claude Code, and `.cursor/hooks.json` → `.cursor/hooks/chunk-validate.sh`
+  for Cursor. The Cursor hook feeds gate failures back to the agent as a
+  `followup_message` and re-runs up to `loop_limit` times.
 
 That 1:1 match is the whole story. **Do not edit `.chunk/config.json` or
 `.circleci/config.yml` independently** — if they drift, "sidecar green" stops
@@ -250,6 +260,7 @@ in both files in the same commit.
 | `ssh exec: wait: remote command exited without exit status…` | Transient sidecar SSH drop on a long step (usually a bundle). Re-run `chunk validate`. |
 | Snyk gate 401 / "credentials not recognized" | Wrong Snyk token (the short legacy API key won't work) or auth not persisted on the sidecar. Re-run the Snyk auth step in §5 with the `snyk_uat…` service-account token. |
 | `chunk sidecar ssh` says no SSH key | Generate `~/.ssh/chunk_ai` and `chunk sidecar add-ssh-key` (see §5 note). |
-| Stop hook didn't fire in Claude Code | You launched `claude` from outside the repo. Quit, `cd` into the repo, run `claude` again. |
+| Stop hook didn't fire | You opened the agent outside the repo. Cursor: open the repo folder as the workspace and check the **Hooks** settings tab / output channel. Claude Code: quit and run `claude` from inside the repo. |
+| Cursor `stop` hook not loading | Cursor watches `.cursor/hooks.json` and reloads on save; if it still doesn't load, restart Cursor. Confirm `.cursor/hooks/chunk-validate.sh` is executable (`chmod +x`). |
 | `gh`/git push rejected with token error | A stale invalid `GITHUB_TOKEN` env var is shadowing your keychain login. `unset GITHUB_TOKEN`. |
 | Sidecar feels cold / first validate very slow | Expected on first run (npm ci + Trivy DB). Warm it before going on stage. |
