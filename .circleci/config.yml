@@ -4,8 +4,9 @@ version: 2.1
 # reliably means "CI green". Gate order matches .chunk/config.json:
 # install → lint → scan (Trivy + Snyk) → test → bundle, for each mini-app.
 #
-# The scan steps need SNYK_TOKEN, provided via the AwesomeCICD `derry-snyk` context.
-# Snyk reads SNYK_TOKEN from the environment, so no `snyk auth` step is required.
+# The scan steps need SNYK_TOKEN, provided via the `moo-snyk` context in this
+# fork's CircleCI org (gh/moolikethecow). Snyk reads SNYK_TOKEN from the
+# environment, so no `snyk auth` step is required.
 #
 # A fuller iOS pipeline (OIDC, Fastlane, TestFlight, App Store) lives on
 # AwesomeCICD/circleci-demo-ios:bcp-demo for reference.
@@ -65,11 +66,11 @@ workflows:
     jobs:
       - validate-miniapp:
           name: "Payments"
-          context: derry-snyk
+          context: moo-snyk
           miniapp_name: payments
           miniapp_path: miniapps/payments
       - validate-miniapp:
           name: "Transfers"
-          context: derry-snyk
+          context: moo-snyk
           miniapp_name: transfers
           miniapp_path: miniapps/transfers
