@@ -95,6 +95,50 @@ git fetch upstream && git merge upstream/main
 
 ---
 
+## 3b. Set up CircleCI on the fork (one-time, for the push beat)
+
+The on-stage finale (`DEMO.md` step 4 / §8 below) pushes to the fork and shows the
+CircleCI pipeline go green. That only works if **the fork itself is a CircleCI
+project**. The fork builds under its own CircleCI org — `gh/moolikethecow` (org id
+`49bdbed5-309d-401c-b65b-932f6c3fd56e`) — which is *separate* from AwesomeCICD, so it
+cannot use AwesomeCICD's `derry-snyk` context. It needs its own `SNYK_TOKEN` context.
+
+```bash
+# 1. Follow the fork so CircleCI builds it (or click "Set Up Project" in the CircleCI UI).
+curl -s -X POST -H "Circle-Token: $CIRCLE_TOKEN" \
+  https://circleci.com/api/v1.1/project/gh/moolikethecow/circleci-mobile-banking-app/follow
+
+# 2. Create the moo-snyk context in the fork's org.
+curl -s -X POST -H "Circle-Token: $CIRCLE_TOKEN" -H "Content-Type: application/json" \
+  https://circleci.com/api/v2/context \
+  -d '{"name":"moo-snyk","owner":{"id":"49bdbed5-309d-401c-b65b-932f6c3fd56e","type":"organization"}}'
+# -> note the returned context id (currently 263f7227-3630-4f21-80bd-282bc324aba0)
+
+# 3. Put the Snyk service-account token into the context (reads from 1Password;
+#    approve the Touch ID prompt). The value never touches disk or shell history.
+SNYK_PAT="$(op read 'op://Private/Snyk PAT/chunk-pat')"
+curl -s -X PUT -H "Circle-Token: $CIRCLE_TOKEN" -H "Content-Type: application/json" \
+  https://circleci.com/api/v2/context/263f7227-3630-4f21-80bd-282bc324aba0/environment-variable/SNYK_TOKEN \
+  --data-binary "$(jq -nc --arg v "$SNYK_PAT" '{value:$v}')"
+unset SNYK_PAT
+```
+
+`.circleci/config.yml` references `context: moo-snyk` for both jobs (it does **not**
+use `derry-snyk` — that context lives in AwesomeCICD and is unreachable from this org).
+
+Verify: push any commit to `chunk-sidecar-demo` and confirm the pipeline goes green:
+
+```bash
+git push origin chunk-sidecar-demo
+# the Payments + Transfers jobs should both end "success"; PR #1 then shows
+# ci/circleci: Payments and ci/circleci: Transfers as passing checks.
+```
+
+> If the Snyk jobs 401, the `moo-snyk` context is missing `SNYK_TOKEN` (or it's the
+> short legacy key, not the `snyk_uat…` service-account token) — re-run step 3.
+
+---
+
 ## 4. Create the sidecar (one-time)
 
 ```bash
