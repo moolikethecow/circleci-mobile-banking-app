@@ -12,9 +12,6 @@ cd "$REPO_ROOT"
 
 git checkout HEAD -- miniapps/payments/src/App.js miniapps/payments/__tests__/App.test.js
 
-# Forget any reported-green state so the next run narrates green fresh.
-rm -f "$REPO_ROOT/.chunk/.reported-green"
-
 echo "Reset miniapps/payments/{src/App.js,__tests__/App.test.js} to HEAD."
 echo ""
 echo "Run 'chunk validate' to confirm green baseline before next demo run."

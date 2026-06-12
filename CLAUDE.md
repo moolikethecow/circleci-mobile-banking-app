@@ -12,16 +12,8 @@ the star of the demo, not your analysis.
 - Do not run `chunk validate` yourself; the hook runs it.
 
 ## When validation feedback comes back red
+- Name the failing gate(s) and the specific error before you fix anything.
 - Fix **only** the exact issue the hook reported (e.g. an unused import) with the
   smallest possible edit. Don't refactor or touch unrelated files.
-- After the edit, end your turn so the Stop hook re-runs and goes green.
-
-## Always report the hook result — green included
-- Whenever a `chunk validate` Stop-hook result is available, **state it explicitly
-  in your reply**, even when everything passed. Don't go silent on green.
-- On green: say so clearly and list the gate outcome, e.g.
-  "Sidecar validation passed — all 12 gates green (install, lint, scan, test,
-  bundle across payments + transfers)."
-- On red: name the failing gate(s) and the specific error before you fix anything.
-- The point of the demo is that the audience *sees* the sidecar verdict every
-  turn, so never leave a validation cycle unacknowledged.
+- After the edit, end your turn so the Stop hook re-runs. When everything passes
+  the hook exits silently and you stop — that's expected; no need to re-announce.

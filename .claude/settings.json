@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/chunk-validate.sh",
+            "command": "chunk validate",
             "timeout": 600
           }
         ]
