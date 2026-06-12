@@ -49,6 +49,9 @@ test('renders Payments title', () => {
 });
 EOF
 
+# Forget any reported-green state so the post-fix green narrates fresh.
+rm -f "$REPO_ROOT/.chunk/.reported-green"
+
 echo "Seeded broken state in:"
 echo "  $APP"
 echo "  $TEST"

@@ -65,3 +65,6 @@ miniapps/*/dist/
 
 # Backstage demo secret cache (resolved from 1Password by scripts/demo-env.sh)
 .demo-env
+
+# Per-state marker so the stop hook reports each green result only once
+.chunk/.reported-green

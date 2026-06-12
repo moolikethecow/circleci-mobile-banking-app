@@ -27,20 +27,33 @@ cd "$REPO_ROOT" || exit 0
 output="$(chunk validate </dev/null 2>&1)"
 status=$?
 
-if [ "$status" -eq 0 ]; then
-  # All gates green — let the agent stop.
+emit() { # $1 = followup message
+  if command -v jq >/dev/null 2>&1; then
+    jq -nc --arg m "$1" '{followup_message: $m}'
+  else
+    python3 -c 'import json,sys; print(json.dumps({"followup_message": sys.argv[1]}))' "$1"
+  fi
+}
+
+if [ "$status" -ne 0 ]; then
+  # A gate failed. Feed the output back so the agent fixes it and validation
+  # re-runs (bounded by loop_limit in .cursor/hooks.json).
+  emit "chunk validate failed — the sidecar caught an issue before this change can be pushed. Fix the problem(s) below with the smallest possible edit, then validation will run again automatically:
+
+${output}"
   exit 0
 fi
 
-# A gate failed. Feed the output back so the agent fixes it and validation
-# re-runs. `followup_message` is the only documented `stop` output field.
-msg="chunk validate failed — the sidecar caught an issue before this change can be pushed. Fix the problem(s) below, then validation will run again automatically:
+# Green. Report each distinct green state exactly once (the report changes no
+# files, so the next run matches the marker and stops cleanly — no loop).
+STATE_HASH="$(git diff HEAD 2>/dev/null | shasum 2>/dev/null | awk '{print $1}')"
+MARKER="$REPO_ROOT/.chunk/.reported-green"
+if [ -f "$MARKER" ] && [ "$(cat "$MARKER" 2>/dev/null)" = "$STATE_HASH" ]; then
+  exit 0
+fi
+printf '%s' "$STATE_HASH" > "$MARKER"
+
+emit "Sidecar validation PASSED — all gates are green. Do NOT edit any files. Report this to the user now: say that chunk validate passed on the sidecar and the change is safe to push, and summarize the gate set (install, lint, scan, test, bundle across the payments and transfers mini-apps). Validation output:
 
 ${output}"
-
-if command -v jq >/dev/null 2>&1; then
-  jq -nc --arg m "$msg" '{followup_message: $m}'
-else
-  python3 -c 'import json,sys; print(json.dumps({"followup_message": sys.argv[1]}))' "$msg"
-fi
 exit 0
