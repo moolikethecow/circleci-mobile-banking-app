@@ -62,3 +62,6 @@ vendor/
 # Node / React Native
 node_modules/
 miniapps/*/dist/
+
+# Backstage demo secret cache (resolved from 1Password by scripts/demo-env.sh)
+.demo-env
