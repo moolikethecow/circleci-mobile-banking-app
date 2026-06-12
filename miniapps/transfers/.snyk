@@ -1,0 +1,18 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.0
+ignore:
+  SNYK-JS-IMAGESIZE-17295814:
+    - '*':
+        reason: >-
+          Transitive build-time dependency: @react-native/metro-config >
+          metro-config > metro > image-size@1.2.1. No upstream fix available
+          (metro bundler, not shipped to production). Tracked for re-review.
+        expires: 2026-12-31T00:00:00.000Z
+  SNYK-JS-IMAGESIZE-17295816:
+    - '*':
+        reason: >-
+          Transitive build-time dependency: @react-native/metro-config >
+          metro-config > metro > image-size@1.2.1. No upstream fix available
+          (metro bundler, not shipped to production). Tracked for re-review.
+        expires: 2026-12-31T00:00:00.000Z
+patch: {}
