@@ -14,81 +14,81 @@
       "name": "lint-payments",
       "run": "cd miniapps/payments && npm run lint",
       "role": "gate",
-      "remote": true,
       "timeout": 60,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "lint-transfers",
       "run": "cd miniapps/transfers && npm run lint",
       "role": "gate",
-      "remote": true,
       "timeout": 60,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "scan-payments-trivy",
       "run": "cd miniapps/payments && trivy fs --severity HIGH,CRITICAL --exit-code 1 --no-progress .",
       "role": "gate",
-      "remote": true,
       "timeout": 180,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "scan-transfers-trivy",
       "run": "cd miniapps/transfers && trivy fs --severity HIGH,CRITICAL --exit-code 1 --no-progress .",
       "role": "gate",
-      "remote": true,
       "timeout": 180,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "scan-payments-snyk",
       "run": "cd miniapps/payments && snyk test --severity-threshold=high",
       "role": "gate",
-      "remote": true,
       "timeout": 180,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "scan-transfers-snyk",
       "run": "cd miniapps/transfers && snyk test --severity-threshold=high",
       "role": "gate",
-      "remote": true,
       "timeout": 180,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "test-payments",
       "run": "cd miniapps/payments && npm test -- --watchAll=false",
       "role": "gate",
-      "remote": true,
       "timeout": 120,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "test-transfers",
       "run": "cd miniapps/transfers && npm test -- --watchAll=false",
       "role": "gate",
-      "remote": true,
       "timeout": 120,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "bundle-payments",
       "run": "cd miniapps/payments && mkdir -p dist/ios/assets && npm run bundle:ios",
       "role": "gate",
-      "remote": true,
       "timeout": 300,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     },
     {
       "name": "bundle-transfers",
       "run": "cd miniapps/transfers && mkdir -p dist/ios/assets && npm run bundle:ios",
       "role": "gate",
-      "remote": true,
       "timeout": 300,
-      "limit": 3
+      "limit": 3,
+      "remote": true
     }
   ],
   "vcs": {
@@ -98,6 +98,7 @@
   "validation": {
     "sidecarImage": "8318d301-5fbd-46eb-aaf5-5f11d162d18e"
   },
+  "orgID": "efc130dc-284f-4533-964e-844f5c173860",
   "environment": {
     "stack": "ruby",
     "setup": [
